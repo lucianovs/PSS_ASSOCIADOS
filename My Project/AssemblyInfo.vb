@@ -8,11 +8,11 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("COLABORADOR")> 
-<Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("")> 
-<Assembly: AssemblyProduct("COLABORADOR")> 
-<Assembly: AssemblyCopyright("Copyright ©  2014")> 
+<Assembly: AssemblyTitle("ASSOCIADOS")> 
+<Assembly: AssemblyDescription("Este módulo visa gerenciar o cadastro de associados e seus vínculos dentro do sistema. Todas as informações registradas neste módulo irão compor as fichas do módulo do censo.")> 
+<Assembly: AssemblyCompany("SSVP - SOCIEDADE SÃO VICENTE DE PAULO")> 
+<Assembly: AssemblyProduct("ASSOCIADOS")> 
+<Assembly: AssemblyCopyright("Copyright ©  2015")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>

@@ -18,3 +18,9 @@ C:\Fontes\SSVP_Projeto\COLABORADOR\obj\Debug\COLABORADOR.frmColaboradores.resour
 C:\Fontes\SSVP_Projeto\COLABORADOR\obj\Debug\COLABORADOR.frmTipoDeComplemento.resources
 C:\Fontes\SSVP_Projeto\COLABORADOR\obj\Debug\COLABORADOR.frmTipoDeOcupacao.resources
 C:\Fontes\SSVP_Projeto\COLABORADOR\obj\Debug\COLABORADOR.dlgColaborador.resources
+C:\Fontes\SSVP_Projeto\COLABORADOR\obj\Debug\COLABORADOR.dlgConferencia.resources
+C:\Fontes\SSVP_Projeto\COLABORADOR\obj\Debug\COLABORADOR.frmMembros.resources
+C:\Fontes\SSVP_Projeto\COLABORADOR\obj\Debug\COLABORADOR.dlgUnidade.resources
+C:\Fontes\SSVP_Projeto\COLABORADOR\obj\Debug\COLABORADOR.frmRelColabUnidades.resources
+C:\Fontes\SSVP_Projeto\COLABORADOR\obj\Debug\COLABORADOR.dlgCParticular.resources
+C:\Fontes\SSVP_Projeto\COLABORADOR\obj\Debug\COLABORADOR.frmResumoCad.resources

@@ -10,7 +10,7 @@ Public Class mdiPrincipal
         Dim bArguments As Boolean = True
         Dim x, y As Integer
 
-        g_Modulo = "COLABORADOR"
+        g_Modulo = "ASSOCIADOS"
 
         'Ativar os Parâmetros iniciais de Segurança
         'Resgatar as Informações da Chamada
@@ -19,11 +19,12 @@ Public Class mdiPrincipal
         g_Login = ""
 
         If Not bUsarVPN Then
+            'bArguments = False
             '***** Indicar qual usuário deverá se logado automaticamente
-            g_Login = ClassCrypt.Encrypt("admin")
-            bArguments = False
-            ''g_Login =  ClassCrypt.Encrypt("jose.alves")
-            ''g_Login = ClassCrypt.Encrypt("luciano.vieira")
+            'g_Login = ClassCrypt.Encrypt("admin")
+            'g_Login = ClassCrypt.Encrypt("jose.alves")
+            'g_Login = ClassCrypt.Encrypt("luciano.vieira")
+            'g_Login = ClassCrypt.Encrypt("teste.3")
             '*****
         End If
         Try
@@ -72,7 +73,8 @@ Public Class mdiPrincipal
             'Verificar o acesso às opções do sistema
             Dim cModulo As Integer = getCodModulo(g_Modulo) 'Pegar o código do Módulo
             Dim nCodUsuario As Integer = getCodUsuario(ClassCrypt.Decrypt(g_Login)) 'pegar o código do usuario
-
+            'Verificar o acesso às opções do sistema
+            
             For Each _control As Object In Me.Controls
                 If TypeOf (_control) Is MenuStrip Then
                     For Each itm As ToolStripMenuItem In _control.items
@@ -121,8 +123,15 @@ Public Class mdiPrincipal
     End Sub
 
     Private Sub menuUsuarios_Click(sender As Object, e As EventArgs) Handles menuSisUsuarios.Click
-        '?? Alterar os parâmetros para passar ao Browse (Entudade e Form. do Cadastro) ??
-        Dim frmBrowse_Usuario As frmBrowse = New frmBrowse("ESI000", "frmUsuario")
+        '?? Alterar os parâmetros para passar ao Browse (Entidade e Form. do Cadastro) ??
+        Dim sWhere As String = "SI000_STAUSU<>'E'"
+        Dim nCodigoUsu As Integer = getCodUsuario(ClassCrypt.Decrypt(g_Login))
+
+        If Not UsuarioAdministrador(nCodigoUsu) Then
+            sWhere += " and SI000_CODUSU=" & nCodigoUsu.ToString
+        End If
+
+        Dim frmBrowse_Usuario As frmBrowse = New frmBrowse("ESI000", "frmUsuario", , sWhere)
 
         frmBrowse_Usuario.MdiParent = Me
         frmBrowse_Usuario.Tag = menuSisUsuarios.Tag 'é gravado no tag do menu o nível de acesso
@@ -144,25 +153,6 @@ Public Class mdiPrincipal
         frmBrowse_TipoDeOcupacao.Show()
     End Sub
 
-    Private Sub menuCadTipoDeComplemento_Click(sender As Object, e As EventArgs) Handles menuCadTipoDeComplemento.Click
-        Dim frmBrowse_TipoDeComplemento As frmBrowse = New frmBrowse("EUN002", "frmTipoDeComplemento")
-
-        frmBrowse_TipoDeComplemento.MdiParent = Me
-        frmBrowse_TipoDeComplemento.Tag = menuCadTipoDeComplemento.Tag 'é gravado no tag do menu o nível de acesso
-        frmBrowse_TipoDeComplemento.Text = menuCadTipoDeComplemento.Text
-        frmBrowse_TipoDeComplemento.Show()
-    End Sub
-
-    Private Sub menuVincularUsuárioXUnidades_Click(sender As Object, e As EventArgs)
-    End Sub
-
-    Private Sub menuGerenciarUnidades_Click(sender As Object, e As EventArgs)
-
-    End Sub
-
-    Private Sub menuSolicitarAgregaçãoDeUnidades_Click(sender As Object, e As EventArgs)
-    End Sub
-
     Private Sub menuRelUnidades_Click(sender As Object, e As EventArgs) Handles menuRelUnidades.Click
         Dim frmRelUnidades As frmRelUnidades = New frmRelUnidades
 
@@ -173,9 +163,6 @@ Public Class mdiPrincipal
 
     End Sub
 
-    Private Sub ContentsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ContentsToolStripMenuItem.Click
-
-    End Sub
 
     Private Sub menuConsAgre_Click(sender As Object, e As EventArgs)
         Dim cQuery As String
@@ -214,13 +201,60 @@ Public Class mdiPrincipal
     End Sub
 
     Private Sub menuCadColaboradores_Click(sender As Object, e As EventArgs) Handles menuCadColaboradores.Click
-        Dim frmBrowse_Colaboradores As frmBrowse = New frmBrowse("EUN003", "frmColaboradores", "left join EUN013 on EUN013.UN013_CODUNI=EUN003.UN003_CODUNI", _
-                                                    "(EUN013.UN013_CODUSU=" & getCodUsuario(ClassCrypt.Decrypt(g_Login)).ToString & " AND UN013_PERACE > 0) or (EUN003.UN003_CODUNI=0)")
+        Dim frmBrowse_Colaboradores As frmBrowse = New frmBrowse("EUN003", "frmAssociados", , "EUN003.UN003_SITCOL<>'E'")
+        'left join EUN013 on EUN013.UN013_CODUNI=EUN003.UN003_CODUNI", _
+        '                                            "(EUN013.UN013_CODUSU=" & getCodUsuario(ClassCrypt.Decrypt(g_Login)).ToString & " AND UN013_PERACE > 0) or (EUN003.UN003_CODUNI=0)")
 
         frmBrowse_Colaboradores.MdiParent = Me
-        frmBrowse_Colaboradores.Tag = 2 'menuCadUnidades.Tag 'é gravado no tag do menu o nível de acesso
+        frmBrowse_Colaboradores.Tag = menuCadColaboradores.Tag 'é gravado no tag do menu o nível de acesso
         frmBrowse_Colaboradores.Text = menuCadColaboradores.Text
         frmBrowse_Colaboradores.Show()
     End Sub
 
+    Private Sub mnuAssociarConferencia_Click(sender As Object, e As EventArgs) Handles mnuAssociarConferencia.Click
+        Dim nCodUsuario As Integer = getCodUsuario(ClassCrypt.Decrypt(g_Login))
+        Dim frmBrowse_Membros As frmBrowse = New frmBrowse("QUN000", "frmAssocMembros", IIf(nCodUsuario = 1, "", "inner join EUN013 on UN013_CODUNI=UN000_CODRED"), _
+            IIf(nCodUsuario = 1, "", "UN013_CODUSU=" & getCodUsuario(ClassCrypt.Decrypt(g_Login)).ToString & " AND UN013_PERACE > 0"))
+        frmBrowse_Membros.MdiParent = Me
+        frmBrowse_Membros.Tag = mnuAssociarConferencia.Tag 'é gravado no tag do menu o nível de acesso
+        frmBrowse_Membros.Text = mnuAssociarConferencia.Text
+        frmBrowse_Membros.Show()
+    End Sub
+
+    Private Sub menuMembrosPorConferencia_Click(sender As Object, e As EventArgs) Handles menuMembrosPorConferencia.Click
+        Dim frmRelColaborador As frmRelColabUnidades = New frmRelColabUnidades
+
+        frmRelColaborador.MdiParent = Me
+        frmRelColaborador.Tag = menuMembrosPorConferencia.Tag 'é gravado no tag do menu o nível de acesso
+        frmRelColaborador.Text = menuMembrosPorConferencia.Text
+        frmRelColaborador.Show()
+
+    End Sub
+
+    Private Sub menuResumoDoCadastro_Click(sender As Object, e As EventArgs) Handles menuResumoDoCadastro.Click
+        Dim frmResumoCad As frmResumoCad = New frmResumoCad
+
+        frmResumoCad.MdiParent = Me
+        frmResumoCad.Text = menuResumoDoCadastro.Text
+        frmResumoCad.Show()
+
+    End Sub
+
+    Private Sub Sobre_Click(sender As Object, e As EventArgs) Handles Sobre.Click
+        Dim frmSobre As frmSobre = New frmSobre
+
+        frmSobre.MdiParent = Me
+        frmSobre.Text = Sobre.Text
+        frmSobre.Show()
+    End Sub
+
+    Private Sub Manual_Click(sender As Object, e As EventArgs) Handles Manual.Click
+
+        Process.Start(Application.ProductName & ".pdf")
+
+    End Sub
+
+    Private Sub mnuSair_Click(sender As Object, e As EventArgs) Handles mnuSair.Click
+        Me.Close()
+    End Sub
 End Class
